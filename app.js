@@ -5,7 +5,7 @@ require("dotenv").config();
 //<< mongoose part
 const mongoose = require("mongoose");
 
-main().catch(err => console.log(err));
+main().catch((err) => console.log(err));
 
 async function main() {
   await mongoose.connect(process.env.DB_URI);
@@ -13,16 +13,24 @@ async function main() {
   // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
 }
 const kittySchema = new mongoose.Schema({
-  name: String
+  name: String,
 });
 
-const Kitten = mongoose.model('Kitten', kittySchema);
+const Kitten = mongoose.model("Kitten", kittySchema);
 
 const ralph = new Kitten({
-  name:"ralphas4"
+  name: "ralphas4",
 });
 
-ralph.save();
+//ralph.save();
+let thedata;
+Kitten.find({})
+  .then((data) => {
+    thedata = data;
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 //mangoose part>>
 const port = process.env.PORT || 5000;
@@ -31,6 +39,6 @@ app.listen(port, () => {
   console.log(`server is running on ${port}`);
 });
 
-app.get("/", (req,res) => {
-  res.render("home", { name: "something" });
+app.get("/", (req, res) => {
+  res.render("home", { name: thedata[0].name });
 });
